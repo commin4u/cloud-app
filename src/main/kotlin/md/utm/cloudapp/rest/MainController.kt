@@ -8,6 +8,6 @@ class MainController {
 
     @GetMapping("/")
     fun main(): String {
-        return "123a "
+        return "aaasdDicol"
     }
 }

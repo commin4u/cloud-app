@@ -5,18 +5,41 @@ metadata:
   labels:
     app: cloud-app
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: cloud-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   template:
     metadata:
       labels:
         app: cloud-app
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
         - name: cloud-app-container
           image: cloud-app:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+
